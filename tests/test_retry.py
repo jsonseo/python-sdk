@@ -122,7 +122,9 @@ class RetryTest(unittest.TestCase):
         self.client(max_retry_delay=30.0).yandex("тест")
 
         self.assertEqual(2, self.transport.count)
-        self.assertGreaterEqual(time.monotonic() - started, 1.0)
+        # Допуск на зернистость таймера: на Windows сон отмеряется с
+        # точностью до миллисекунд в меньшую сторону.
+        self.assertGreaterEqual(time.monotonic() - started, 0.95)
 
     def test_retry_after_beyond_the_cap_stops_retrying(self):
         """Дольше потолка SDK не ждёт: отдаёт ошибку с retry_after."""
@@ -175,7 +177,7 @@ class RetryTest(unittest.TestCase):
         self.client(retry_delay=0.3, max_retry_delay=5.0).yandex("тест")
 
         self.assertEqual(2, self.transport.count)
-        self.assertGreaterEqual(time.monotonic() - started, 0.3)
+        self.assertGreaterEqual(time.monotonic() - started, 0.28)
 
     def test_retry_after_in_the_past_falls_back_to_backoff(self):
         when = email.utils.formatdate(time.time() - 600, usegmt=True)

@@ -7,15 +7,28 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    name: Python ${{ matrix.python }} / ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         # 3.8 — нижняя граница поддержки, выше — все живые ветки.
         python: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
-
-    name: Python ${{ matrix.python }}
+        os: [ubuntu-latest]
+        # Крайние версии гоняем ещё и на других системах: тесты транспорта
+        # работают с сокетами напрямую, а там поведение своё. На macOS
+        # начинаем с 3.11 — для arm64 сборок старее нет.
+        include:
+          - python: '3.8'
+            os: windows-latest
+          - python: '3.14'
+            os: windows-latest
+          - python: '3.11'
+            os: macos-latest
+          - python: '3.14'
+            os: macos-latest
 
     steps:
       - uses: actions/checkout@v7

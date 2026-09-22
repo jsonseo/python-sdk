@@ -9,6 +9,7 @@
 import socket
 import struct
 import threading
+import time
 import unittest
 
 from jsonseo import Client, IncompleteResponseError, NetworkError, TimeoutError
@@ -152,13 +153,18 @@ class TransportTest(unittest.TestCase):
             self.send(self.serve(handler))
 
     def test_truncated_body_with_reset(self):
-        """Обрыв через RST — тот же обрыв на отдаче, повторять его нельзя."""
+        """
+        Обрыв через RST — тот же обрыв на отдаче, повторять его нельзя.
+
+        Заголовки отдаются отдельно и с паузой: Windows при получении RST
+        выбрасывает всё, что лежит в приёмном буфере, и без паузы обрыв
+        стал бы неотличим от недошедшего запроса.
+        """
 
         def handler(connection):
-            connection.sendall(
-                b"HTTP/1.1 200 OK\r\nContent-Length: 1000\r\n"
-                b"Connection: close\r\n\r\n" + b'{"results":['
-            )
+            connection.sendall(b"HTTP/1.1 200 OK\r\nContent-Length: 1000\r\nConnection: close\r\n\r\n")
+            time.sleep(0.5)
+            connection.sendall(b'{"results":[')
             reset(connection)
 
         with self.assertRaises(IncompleteResponseError):
@@ -180,8 +186,6 @@ class TransportTest(unittest.TestCase):
 
     def test_silence_before_headers_is_a_timeout(self):
         def handler(connection):
-            import time
-
             time.sleep(5)
 
         with self.assertRaises(TimeoutError):
@@ -227,9 +231,9 @@ class ClientOverRealSocketTest(unittest.TestCase):
 
                 try:
                     connection.recv(65536)
-                    connection.sendall(
-                        b"HTTP/1.1 200 OK\r\nContent-Length: 1000\r\n\r\n" + b'{"results":['
-                    )
+                    connection.sendall(b"HTTP/1.1 200 OK\r\nContent-Length: 1000\r\n\r\n")
+                    time.sleep(0.5)
+                    connection.sendall(b'{"results":[')
                     reset(connection)
                 except OSError:
                     pass
