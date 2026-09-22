@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jsonseo"
+version = "1.0.0"
+description = "Официальный Python SDK для JSON SEO API: выдача Яндекса, Google и Bing, Вордстат, прогноз Директа и геолокация по IP"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+keywords = ["jsonseo", "seo", "serp", "yandex", "google", "bing", "wordstat", "api"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://jsonseo.ru"
+Documentation = "https://jsonseo.ru/docs"
+Repository = "https://github.com/jsonseo/python-sdk"
+Issues = "https://github.com/jsonseo/python-sdk/issues"
+
+[tool.setuptools]
+packages = ["jsonseo"]
+
+[tool.setuptools.package-data]
+jsonseo = ["py.typed"]

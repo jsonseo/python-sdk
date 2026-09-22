@@ -1,0 +1,32 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.8 — нижняя граница поддержки, выше — все живые ветки.
+        python: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
+
+    name: Python ${{ matrix.python }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - run: python -m unittest discover -s tests -t .
+
+      - name: Сборка пакета
+        run: |
+          python -m pip install --upgrade build
+          python -m build
