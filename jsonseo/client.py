@@ -34,7 +34,7 @@ from .types import (
 
 __all__ = ["Client"]
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 DEFAULT_BASE_URL = "https://jsonseo.ru/api"
 
 Primary = Union[str, int, Sequence[str], None]
@@ -44,7 +44,7 @@ class Client:
     """
     Клиент JSON SEO API.
 
-    >>> client = Client("ВАШ_КЛЮЧ")
+    >>> client = Client("YOUR_KEY")
     >>> serp = client.yandex("купить ноутбук", region=213)
     """
 
@@ -61,9 +61,22 @@ class Client:
         user_agent: Optional[str] = None,
         transport: Any = None,
     ) -> None:
-        if not isinstance(api_key, str) or api_key.strip() == "":
+        # Обрезаем ровно тот же набор, что и остальные SDK: родной strip в
+        # каждом языке свой, и один ключ принимался бы по-разному.
+        key = api_key.strip(" \t\n\r") if isinstance(api_key, str) else ""
+
+        if key == "":
             raise InvalidArgumentError(
                 "Нужен API-ключ: возьмите его в личном кабинете на https://jsonseo.ru."
+            )
+
+        # Заголовок Authorization не переносит не-ASCII и управляющие
+        # символы: с таким ключом он не соберётся, и сервис ответит
+        # «токен не предоставлен» вместо внятной ошибки.
+        if any(not (" " <= ch <= "~") for ch in key):
+            raise InvalidArgumentError(
+                "API-ключ содержит символы вне ASCII: проверьте, что он скопирован "
+                "целиком и без лишних знаков."
             )
 
         if auth not in ("header", "query"):
@@ -76,7 +89,7 @@ class Client:
                 "Настройка attempts ожидает целое число не меньше 1, получено: {!r}.".format(attempts)
             )
 
-        self._api_key = api_key.strip()
+        self._api_key = key
         self._base_url = base_url.rstrip("/")
         # Многостраничная выдача идёт минутами, и оборванный запрос всё
         # равно будет досчитан и оплачен.

@@ -15,6 +15,28 @@ class ClientTest(unittest.TestCase):
         with self.assertRaises(InvalidArgumentError):
             Client("   ")
 
+    def test_rejects_key_with_non_ascii(self):
+        """
+        Иначе заголовок не соберётся, и сервис ответит «токен не предоставлен».
+
+        Второй набор — края строки: там родной strip каждого языка свой, и без
+        общего набора обрезки эти ключи расходились бы по SDK.
+        """
+        edges = ("\u00a0KEY", "\u2000KEY", "\u0085KEY", "KEY\x00", "\x0cKEY", "\x1cKEY", "KEY\x0b")
+
+        for key in ("КЛЮЧ", "dead\tbeef", "dead\x01beef", "ключdeadbeef") + edges:
+            with self.assertRaises(InvalidArgumentError, msg="ключ {!r}".format(key)):
+                Client(key)
+
+    def test_trims_the_key_instead_of_rejecting_it(self):
+        self.transport.queue_json({})
+
+        Client("  Ab3-_.~xYz09 \n", transport=self.transport).balance()
+
+        self.assertEqual(
+            "Bearer Ab3-_.~xYz09", self.transport.requests[0]["headers"]["Authorization"]
+        )
+
     def test_rejects_unknown_option(self):
         # Настройки — только именованные аргументы, опечатку ловит сам Python.
         with self.assertRaises(TypeError):

@@ -2,7 +2,7 @@
 Официальный Python SDK для JSON SEO API.
 
 >>> from jsonseo import Client
->>> client = Client("ВАШ_КЛЮЧ")
+>>> client = Client("YOUR_KEY")
 >>> serp = client.yandex("купить ноутбук", region=213)
 """
 
