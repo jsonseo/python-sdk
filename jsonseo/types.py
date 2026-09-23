@@ -217,6 +217,10 @@ class WordstatResponse(TypedDict, total=False):
     region: str
     device: str
     results: WordstatResults
+    #: Почему данных нет: Вордстат не принял фразу из-за синтаксиса операторов.
+    #: Ответ при этом удачный и оплаченный, а результаты пустые. У обычного
+    #: ответа ключа нет.
+    error: str
 
 
 class WordstatFrequencyResults(TypedDict, total=False):
@@ -229,6 +233,10 @@ class WordstatFrequencyResponse(TypedDict, total=False):
     region: str
     device: str
     results: WordstatFrequencyResults
+    #: Почему данных нет: Вордстат не принял фразу из-за синтаксиса операторов.
+    #: Ответ при этом удачный и оплаченный, а результаты пустые. У обычного
+    #: ответа ключа нет.
+    error: str
 
 
 class WordstatGraphPoint(TypedDict, total=False):
@@ -248,6 +256,10 @@ class WordstatGraphResponse(TypedDict, total=False):
     device: str
     type: str
     results: WordstatGraphResults
+    #: Почему данных нет: Вордстат не принял фразу из-за синтаксиса операторов.
+    #: Ответ при этом удачный и оплаченный, а результаты пустые. У обычного
+    #: ответа ключа нет.
+    error: str
 
 
 class WordstatMapRow(TypedDict, total=False):
@@ -270,6 +282,10 @@ class WordstatMapResponse(TypedDict, total=False):
     device: str
     type: str
     results: WordstatMapResults
+    #: Почему данных нет: Вордстат не принял фразу из-за синтаксиса операторов.
+    #: Ответ при этом удачный и оплаченный, а результаты пустые. У обычного
+    #: ответа ключа нет.
+    error: str
 
 
 class DirectPosition(TypedDict, total=False):
