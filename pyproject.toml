@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jsonseo"
-version = "1.0.1"
+version = "1.0.2"
 description = "Официальный Python SDK для JSON SEO API: выдача Яндекса, Google и Bing, Вордстат, прогноз Директа и геолокация по IP"
 readme = "README.md"
 license = { text = "MIT" }

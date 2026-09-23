@@ -34,7 +34,7 @@ from .types import (
 
 __all__ = ["Client"]
 
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 DEFAULT_BASE_URL = "https://jsonseo.ru/api"
 
 Primary = Union[str, int, Sequence[str], None]
